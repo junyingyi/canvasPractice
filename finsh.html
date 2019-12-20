@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body,
+        html {
+            height: 100%;
+        }
+
+        canvas {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+
+    <canvas id="vas"></canvas>
+
+
+    <script>
+        const vas = document.getElementById("vas")
+        const ctx = vas.getContext('2d');
+        vas.style.backgroundColor = "black"
+        const WIDTH = document.documentElement.clientWidth
+        const HEIGHT = document.documentElement.clientHeight
+        vas.width = WIDTH
+        vas.height = HEIGHT
+        class Particle {
+            constructor(options = {}) {
+                const { x = 0, y = 0, color = '#fff', radius = 5 } = options;
+                this.radius = radius;
+                this.x = x;
+                this.y = y;
+                this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+                // console.log(this.x, this.y)
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+        const l1 = new Particle({
+            x: 200,
+            y: 150,
+            color: "skyblue",
+            radius: 5
+        })
+        const l2 = new Particle({
+            x: 300,
+            y: 300,
+            color: "skyblue",
+            radius: 5
+        })
+        l1.draw();
+        l2.draw()
+
+        //获取两点之间的距离
+        let x = l1.x - l2.x
+        let y = l1.y - l2.y
+        console.log(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)))
+
+
+        ctx.beginPath()
+        ctx.strokeStyle = 'skyblue';
+        ctx.save();
+        ctx.moveTo(l1.x, l1.y);
+        ctx.lineTo(l2.x, l2.y);
+        ctx.stroke();
+
+
+
+
+        // function createStar(context, n, r, R, x, y, lwid) {
+        //     /*
+        //     content 画图对象
+        //     n 星型顶点数
+        //     r 内圆半径
+        //     R 外圆半径
+        //     x 星型中心点x坐标
+        //     y 星型中心店y坐标
+        //     lwid lineWidth
+        //     */
+        //     ctx.save();
+        //     ctx.lineWidth = lwid;
+        //     ctx.beginPath();
+        //     ctx.translate(x, y);
+        //     for (var i = 0; i < n; i++) {
+        //         ctx.lineTo(Math.cos(((1 / 4 + i) * 2 * Math.PI / n)) * R, -Math.sin(((1 / 4 + i) * 2 * Math.PI / n)) * R);
+        //         ctx.lineTo(Math.cos(((3 / 4 + i) * 2 * Math.PI / n)) * r, -Math.sin(((3 / 4 + i) * 2 * Math.PI / n)) * r);
+        //     }
+        //     ctx.closePath();
+        //     ctx.fill();
+        //     ctx.restore();
+        // }
+
+        // createStar(4, 2, 10, 400, 400, 10);
+
+
+        class Start {
+            constructor(options = {}) {
+                const { x = 0, y = 0, lwid = 1, n = 0, r = 0, R = 0, color = "skyblue", vx = .2, vy = .2 } = options
+                this.x = x;
+                this.y = y;
+                this.lwid = lwid;
+                this.n = n;
+                this.r = r;
+                this.R = R;
+                this.color = color;
+            }
+            createStar() {
+                /*
+                content 画图对象
+                n 星型顶点数
+                r 内圆半径
+                R 外圆半径
+                x 星型中心点x坐标
+                y 星型中心店y坐标
+                lwid lineWidth
+                */
+                ctx.save();
+                ctx.lineWidth = this.lwid;
+                ctx.beginPath();
+                ctx.translate(this.x, this.y);
+                for (var i = 0; i < this.n; i++) {
+                    ctx.lineTo(Math.cos(((1 / 4 + i) * 2 * Math.PI / this.n)) * this.R, -Math.sin(((1 / 4 + i) * 2 * Math.PI / this.n)) * this.R);
+                    ctx.lineTo(Math.cos(((3 / 4 + i) * 2 * Math.PI / this.n)) * this.r, -Math.sin(((3 / 4 + i) * 2 * Math.PI / this.n)) * this.r);
+                }
+                ctx.fillStyle = this.color;
+                ctx.rotate(0.01 * Math.PI);
+                ctx.strokeStyle = this.color;
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+            // move() {
+            //      ctx.translate(-this.x, -this.y); // 将画布偏移回来
+            //     ctx.rotate( Math.PI / 180*4); // 旋转角度
+            //     ctx.translate(-this.x, -this.y); // 将画布偏移回来
+            // }
+        }
+
+
+        let startArr = []
+        for (var i = 0; i < 20; i++) {
+            startArr.push(new Start({
+                x: Math.random() * WIDTH,
+                y: Math.random() * HEIGHT,
+                n: Math.floor(Math.random() * 4 + 4),
+                r: 1,
+                R: Math.floor(Math.random() * 10 + 10),
+                color: `rgba(135,206,235,1)`
+            }))
+        }
+
+
+
+
+        function draw() {
+            ctx.beginPath();
+            ctx.clearRect(0, 0, WIDTH, HEIGHT);
+            for (const items of startArr) {
+                items.createStar()
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+        // setInterval(() => {
+        //     ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        //     for (const items of startArr) {
+        //         // items.createStar()
+        //         // items.move()
+        //     }
+        // }, 50)
+    </script>
+</body>
+
+</html>

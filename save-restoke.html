@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        html,
+        body {
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+
+        canvas {
+
+            display: block;
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"> </canvas>
+
+
+    <script>
+
+        //获取画板元素
+        let canvas = document.getElementById("canvas")
+        //创建一饿context对象
+        let ctx = canvas.getContext("2d")
+
+        //设置canvas和屏幕一样大小
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+
+
+
+        //用原本的画一个矩形
+        ctx.fillRect(100, 100, 150, 150);
+
+        //保存一下状态
+        ctx.save()
+
+        //画一个红色的矩形
+        ctx.fillStyle = 'red';
+        ctx.fillRect(120, 120, 110, 110)
+
+        //保存一下状态
+        ctx.save()
+
+
+        //画一个绿色的矩形
+        ctx.fillStyle = "green"
+        ctx.fillRect(140, 140, 70, 70);
+
+        //恢复重新加载之前的状态
+        ctx.restore();
+        ctx.fillRect(160, 160, 30, 30)
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>

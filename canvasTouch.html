@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        body,
+        html {
+            height: 100%;
+        }
+
+        canvas {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="vas"></canvas>
+
+
+    <script>
+
+        const vas = document.getElementById("vas")
+        const ctx = vas.getContext('2d');
+        vas.style.backgroundColor = "black"
+        const WIDTH = document.documentElement.clientWidth
+        const HEIGHT = document.documentElement.clientHeight
+        vas.width = WIDTH
+        vas.height = HEIGHT
+
+        //定义鼠标点
+        let mousex, mousey, l1;
+        //画一个圆
+        class Partice {
+            constructor(optaion = {}) {
+                const { x = 0, y = 0, color = "skyblue", radius = 5, vx = 2, vy = 2 } = optaion
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.color = color;
+                this.radius = radius
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.closePath();
+            }
+            move() {
+                this.x += this.vx
+                this.y += this.vy
+                if (this.x > WIDTH || this.x < 0) {
+                    this.vx = -this.vx
+                }
+                if (this.y > HEIGHT || this.y < 0) {
+                    this.vy = -this.vy
+                }
+            }
+            linto(x, y) {
+                ctx.beginPath();
+                ctx.strokeStyle = this.color;
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+        }
+
+        let arcArr = []
+        for (let i = 0; i < 50; i++) {
+            // console.log(Math.random()*WIDTH)
+            // console.log(Math.random()*HEIGHT)
+            let x = Math.random() * WIDTH
+            let y = Math.random() * HEIGHT
+            arcArr.push(new Partice({
+                x,
+                y,
+                vx: Math.floor(Math.random() * 3),
+                vy: Math.floor(Math.random() * 2),
+                radius: Math.ceil(Math.random() * 5 + 2),
+                color: `rgba(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`
+            }))
+        }
+
+
+        //公共方法
+        function getDis(x, y) {
+            return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
+        }
+
+        function draws() {
+            //清空画板
+            ctx.beginPath();
+            ctx.clearRect(0, 0, WIDTH, HEIGHT);
+            for (const items of arcArr) {
+                items.draw()
+                items.move()
+                for (const iterator of arcArr) {
+                    //计算每个点之间的距离
+                    let dis = getDis(items.x - iterator.x, items.y - iterator.y);
+                    if (dis <= 200) {
+                        items.linto(iterator.x, iterator.y)
+                    }
+                    let mouseDis = getDis(items.x - mousex, items.y - mousey);
+                    if (mouseDis <= 200) {
+                        items.linto(mousex, mousey)
+                    }
+                }
+            }
+            requestAnimationFrame(draws);
+        }
+        draws()
+
+        //画鼠标点
+        function mouse() {
+            ctx.beginPath();
+            l1 = new Partice({
+                x: mousex,
+                y: mousey,
+                color: "red",
+                radius: 5,
+            })
+            l1.draw()
+            requestAnimationFrame(mouse);
+        }
+        mouse()
+
+        //鼠标
+        document.addEventListener("mousemove", (event) => {
+            mousex = event.clientX
+            mousey = event.clientY
+        })
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>

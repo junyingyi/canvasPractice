@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        html,
+        body {
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+
+        canvas {
+
+            display: block;
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"> </canvas>
+
+
+
+
+    <script>
+        //获取画板元素
+        let canvas = document.getElementById("canvas")
+        //创建一饿context对象
+        let ctx = canvas.getContext("2d")
+
+        //设置canvas和屏幕一样大小
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+
+
+        ctx.translate(75, 75);
+
+
+        ctx.save();
+        ctx.fillStyle = 'red';
+
+        for (var i = 1; i < 2; i++) { // Loop through rings (from inside to out)
+            // ctx.save();
+            ctx.fillStyle = 'rgb(' + (51 * i) + ',' + (255 - 51 * i) + ',255)';
+
+            for (var j = 0; j < i * 6; j++) { // draw individual dots
+                ctx.rotate(Math.PI * 2 / (i * 6));
+                ctx.beginPath();
+                ctx.arc(0, i * 12.5, 5, 0, Math.PI * 2, true);
+                ctx.fill();
+            }
+
+            // ctx.restore();
+        }
+        ctx.globalCompositeOperation = 'destination-out';
+
+
+
+    </script>
+</body>
+
+</html>

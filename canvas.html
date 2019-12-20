@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        html,
+        body {
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+
+        canvas {
+
+            display: block;
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <canvas id="canvas"> </canvas>
+
+
+
+    <script>
+
+        //获取画板元素
+        let canvas = document.getElementById("canvas")
+        //创建一饿context对象
+        let ctx = canvas.getContext("2d")
+
+        //设置canvas和屏幕一样大小
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+        //1.画矩形
+        //设置颜色
+        ctx.fillStyle = '#c000d0';
+        //画一个矩形   距离画板左上角0 0 的位置画一个200的矩形
+        ctx.fillRect(100, 100, 100, 100);  //充填方式
+
+
+        //2.画线
+        //开始一条新的路径
+        ctx.beginPath();
+        //线条末端样式
+        ctx.lineCap = 'round';
+        //线条宽度
+        // ctx.lineWidth=15;
+        //定义线条开始坐标
+        ctx.moveTo(250, 200);
+        //定义线条结束坐标
+        ctx.lineTo(300, 300);
+        //绘制线条
+        ctx.stroke();
+
+
+        //3.画圆
+        //开始一条新的路径
+        ctx.beginPath();
+        ctx.arc(400, 200, 40, 0, 2 * Math.PI)
+        //绘制线条
+        ctx.stroke();
+
+        //4.文本
+        //设置文字大小
+        ctx.font = '20px sans-serif';
+        //设置阴影
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        //阴影模糊程度
+        ctx.shadowBlur = 2;
+        //阴影颜色
+        ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+        //设置文字内容
+        ctx.fillText("我是canvas", 400, 400);
+
+
+        //5.空心文字
+        //开始一条新的路径
+        ctx.beginPath();
+        ctx.font = "20px Arial";
+        //设置空心文本
+        ctx.strokeText("我是空心的", 200, 400);
+
+        //6.线性渐变
+        ctx.beginPath()
+        //创建一个渐变线条
+        let gradient = ctx.createLinearGradient(400, 400, 600, 400);
+        gradient.addColorStop(0, 'red');
+        gradient.addColorStop(1, "yellow")
+        ctx.fillStyle = gradient
+        ctx.fillRect(500, 500, 100, 100)
+        //绘制线条
+        ctx.stroke()
+
+
+        //7.径向渐变
+        ctx.beginPath()
+        let radia = ctx.createRadialGradient(175, 570, 20, 175, 570, 50);
+        radia.addColorStop(0, 'rgba(255,0,0,0.75)')
+        radia.addColorStop(0.5, 'rgba(0,255,0,0.75)')
+        radia.addColorStop(1, 'rgba(0,0,255,0.75)')
+        ctx.fillStyle = radia
+        ctx.fillRect(100, 500, 150, 150)
+        //绘制线条
+        ctx.stroke()
+
+
+        //8绘制一个矩形边框
+        ctx.beginPath()
+        //绘制一个矩形边框
+        ctx.strokeRect(600, 600, 100, 100);
+        //清除一个矩形的指定位置
+        ctx.clearRect(650, 650, 70, 70);
+
+
+        //9.绘制一个三角形
+        ctx.beginPath()
+        ctx.moveTo(700, 450)
+        ctx.lineTo(700, 550)
+        ctx.lineTo(650, 500)
+        //一个实心的三角形
+        ctx.fill()
+
+
+        //绘制一个贝塞尔曲线
+        ctx.beginPath()
+        ctx.moveTo(400, 300)
+        ctx.quadraticCurveTo(450, 200, 500, 330);
+        //绘制线条
+        ctx.stroke()
+
+
+        //path2d应用
+        ctx.beginPath()
+        //使用path2d存一个矩形
+        let jx = new Path2D();
+        jx.rect(10, 10, 100, 100)
+        //创建一个渐变线条
+        let gx = ctx.createLinearGradient(30, 0, 100, 100);
+        gx.addColorStop(0, 'rgba(255,0,0,0.75)')
+        gx.addColorStop(0.5, 'rgba(0,255,0,0.75)')
+        gx.addColorStop(1, 'rgba(0,0,255,0.75)')
+        //设置线条轮廓渐变颜色
+        ctx.strokeStyle = gx;
+        //绘制线条  将path2d对象当作stroke的形参
+        ctx.stroke(jx)
+
+
+
+        //rgba
+        //画背景
+        ctx.beginPath()
+        ctx.fillStyle = 'rgb(255,221,0)';
+        ctx.fillRect(700, 20, 150, 37.5)
+        //画半透明矩形
+        for (let i = 0; i < 10; i++) {
+            ctx.fillStyle = `rgba(255,255,255,${(i + 1) / 10})`;
+            ctx.fillRect(705 + i * 14, 25, 14, 27.5)
+        }
+
+
+        //虚线
+        function draw() {
+            ctx.clearRect(700, 0, 300, 300);
+            ctx.setLineDash([2, 2]);
+            ctx.lineDashOffset = -offset;
+            ctx.strokeRect(800, 100, 100, 100);
+        }
+        let offset = 0;
+
+        function march() {
+            offset++;
+            if (offset > 16) {
+                offset = 0;
+            }
+            draw();
+            setTimeout(march, 20);
+        }
+
+        march();
+
+
+        //图案样式 Patterns
+        ctx.beginPath()
+        //创建一个image对象
+        let img = new Image()
+        img.src = './timg.jpeg'
+        //图片加载时
+        img.onload = () => {
+            let path = ctx.createPattern(img, 'repeat');
+            ctx.fillStyle = path;
+            ctx.fillRect(100, 700, 400, 400)
+        }
+
+
+        //画一个充填的圆
+        ctx.beginPath()
+        ctx.arc(800, 700, 50, 0, Math.PI * 2);
+        ctx.arc(800, 700, 15, 0, Math.PI * 2);
+        ctx.fill("evenodd")
+
+
+
+        //使用translate例子  save状态保存和restore状态恢复
+        for (let i = 0; i < 3; i++) {
+            //保存一下状态
+            ctx.save();
+            ctx.fillStyle = `rgb${51 * i, 255 - 51 * i, 255}`;
+            //移动
+            ctx.translate(800 + i * 60, 500);
+            //画矩形
+            ctx.fillRect(0, 0, 50, 50)
+            //恢复状态
+            ctx.restore();
+
+        }
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>

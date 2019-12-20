@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+
+    <script>
+
+        // class promise {
+        //     constructor(exectour) {
+        //         //promise 有三个状态  等待  成功  失败
+        //         this.state = 'padding'
+        //         this.value = undefined
+        //         this.reason = undefined
+        //         this.onSuccessBlack = [];  //成功的数组
+        //         this.onfialBlack = [];   //失败的数组
+        //         let resove = (value) => {
+        //             if (this.state == 'padding') {
+        //                 this.state = 'success'
+        //                 this.value = value
+        //                 this.onSuccessBlack.forEach(fn => fn())
+        //             }
+        //         }
+
+        //         let reject = (reason) => {
+        //             if (this.state == 'padding') {
+        //                 this.state = 'reason'
+        //                 this.reason = reason
+        //                 this.onfialBlack.forEach(fn => fn())
+        //             }
+        //         }
+
+        //         //失败直接执行reject
+        //         try {
+        //             exectour(resove, reject)
+        //         } catch (error) {
+        //             reject(error)
+        //         }
+        //     }
+
+        //     //then 方法 有两个值成功有成功的值 失败有失败的值  this.state的状态是成功就执行成功  失败状态就执行失败
+
+        //     then(onSuccess, onfial) {
+
+        //         let promise2 = new promise((resove, reject) => {
+
+        //             if (this.state == 'success') {
+        //                 //成功
+        //                 let x = onSuccess(this.value)
+        //                 resovePromise(promise2, x, resove, reject)
+        //             }
+        //             if (this.state == 'reason') {
+        //                 //失败
+        //                 let x = onfial(this.reason)
+        //                 resovePromise(promise2, x, resove, reject)
+        //             }
+        //             if (this.state == 'padding') {
+        //                 this.onSuccessBlack.push(() => {
+        //                     let x = onSuccess(this.value)
+        //                     resovePromise(promise2, x, resove, reject)
+        //                 })
+        //                 this.onfialBlack.push(() => {
+        //                     let x = onfial(this.reason)
+        //                     resovePromise(promise2, x, resove, reject)
+        //                 })
+        //             }
+        //         })
+        //         //返回一个promise完成链式
+        //         return promise2
+        //     }
+        // }
+
+
+        // function resovePromise(promise2, x, resove, reject) {
+        // 循环引用报错
+        //     if (x === promise2) {
+        //         // reject报错
+        //         return reject(new TypeError('Chaining cycle detected for promise'));
+        //     }
+
+        //     //防止多次调用
+        //     let states;
+        //     //x不是null且x是函数或者是对象
+        //     if (x != null && (typeof x == 'Object' || typeof x == 'function')) {
+
+        //         try {
+        //             let then = x.then
+        //             //如果是函数就在执行一次
+        //             if (typeof then == 'function') {
+        //                 //x是this coback是成功或者失败的回调
+        //                 then.call(x, coback => {
+        //                     if (states) return;
+        //                     states = true;
+        //                     resovePromise(promise2, coback, resove, reject)
+        //                 }), error => {
+        //                     if (states) return;
+        //                     states = true;
+        //                     reject(error)
+        //                 }
+        //             } else {
+        //                 //如果是对象直接执行成功的结果
+        //                 resove(x)
+        //             }
+
+        //         } catch (error) {
+        //             if (states) return;
+        //             states = true;
+        //             reject(error)
+        //         }
+        //     } else {
+        //         resove(x)
+        //     }
+        // }
+
+
+
+        //在写一遍promise
+        //1创建一个promise类 有两个方法 成功 和失败
+        //2.promise有三个状态 正常状态 成功状态 失败状态  状态改变后不可在变
+        //3.promise有一个then方法
+        //4。由于一个promise有多个then 创建两个数组调用他们
+        //5.解决链式调用 在第一个then方法中返回一个promise
+        //6.resovepromise处理promise2返回的promise和promise2的关系
+        //7.完成resovepromise函数
+        // class promise {
+        //     constructor(entery) {
+        //         this.state = 'padding'
+        //         this.success = undefined
+        //         this.fail = undefined
+        //         this.onSuccess = []
+        //         this.onFail = []
+        //         let resove = (success) => {
+        //             //成功
+        //             if (this.state == 'padding') {
+        //                 this.state = 'success'
+        //                 this.success = success
+        //                 //一旦resolve执行就调用成功数组的函数 
+        //                 this.onSuccess.forEach(fn => fn())
+        //             }
+        //         }
+        //         let reject = (fail) => {
+        //             //失败
+        //             if (this.state == 'padding') {
+        //                 this.state = 'fail'
+        //                 this.fail = fail
+        //                 //一点reject执行就调用失败数组的函数
+        //                 this.onFail.forEach(fn => fn())
+        //             }
+        //         }
+        //         //如果执行entery报错就执行reject
+        //         try {
+        //             entery(resove, reject)
+        //         } catch (error) {
+        //             reject(error)
+        //         }
+        //     }
+        //     then(onResove, onReject) {
+        //         let promise2 = new promise((resove, reject) => {
+        //             //成功有成功的值 失败有失败的结果
+        //             if (this.state == 'success') {
+        //                 //成功状态执行成功的函数
+        //                 let x = onResove(this.success)
+        //                 resovePromise(promise2, x, resove, reject)
+        //             }
+        //             if (this.state == "fail") {
+        //                 //失败状态执行失败的函数
+        //                 let x = onReject(this.fail)
+        //                 resovePromise(promise2, x, resove, reject)
+        //             }
+        //             if (this.state == 'padding') {
+        //                 //如果状态是初始状态就将函数存入成功和失败的数组中
+        //                 this.onSuccess.push(onResove(() => {
+        //                     let x = onResove(this.success)
+        //                     resovePromise(promise2, x, resove, reject)
+        //                 }))
+        //                 this.onFail.push(onResove(() => {
+        //                     //失败状态执行失败的函数
+        //                     let x = onReject(this.fail)
+        //                     resovePromise(promise2, x, resove, reject)
+        //                 }))
+        //             }
+        //         })
+
+        //         return promise2
+
+        //     }
+        // }
+
+        // function resovePromise(promise2, x, resove, reject) {
+        //     //是否循环引用
+        //     if (promise2 == x) {
+        //         return reject('报错啦')
+        //     }
+
+        //     //只能执行一次避免重复执行创建一个变量来控制
+        //     let number;
+        //     //x 不能是null 并且如果是函数或者是对象就再执行一次resovepromise进行解析
+        //     if (x != null && (typeof x == 'Object' || typeof x == 'function')) {
+        //         try {
+        //             let then = x.then
+        //             if (typeof then == 'function') {
+        //                 //如果then是函数就确定是promise让他执行
+        //                 then.call(x, y => {
+        //                     //x是this y是回调函数
+        //                     if (number) return;
+        //                     number = true
+        //                     //resove的结果依旧是promise再次执行resovepromise函数
+        //                     resovePromise(promise2, y, resove, reject)
+        //                 }, err => {
+        //                     if (number) return;
+        //                     number = true
+        //                     //失败执行返回失败的结果
+        //                     reject(err)
+        //                 })
+        //             } else {
+        //                 //直接成功
+        //                 resove(x)
+        //             }
+        //         } catch (error) {
+        //             //失败直接执行reject
+        //             if (number) return;
+        //             number = true
+        //             reject(error)
+        //         }
+        //     }
+        // } 
+
+
+        /**
+
+          1.创建一个promise类
+          2.有两个方法resove reject 并执行
+          3.promise有三个状态 成功 失败 等待
+          4.promise有一个then方法
+          5.解决多个then的链式调用
+        */
+
+        class promise {
+
+            constructor(enter) {
+                this.padding = "padding"
+                this.success = null
+                this.fail = null
+                //创建两个数组解决异步实现
+                this.successArr = []  //成功状态函数的存储数组
+                this.failArr = []   //失败状态函数的存储数组
+                let resove = (success) => {
+                    if (padding == "padding") {
+                        //修改状态
+                        this.padding = "success"
+                        //将值赋值给success
+                        this.success = success
+                        //一旦成功执行成功的函数
+                        this.successArr.forEach(fn => fn())
+                    }
+                }
+                let reject = (fail) => {
+                    if (this.padding = "padding") {
+                        this.padding = "fail"
+                        this.fail = fail
+                        //一旦失败执行失败的函数
+                        this.failArr.forEach(fn => fn())
+                    }
+                }
+                //使用try cate包裹执行
+                try {
+                    enter(resove, reject)
+                } catch (error) {
+                    //失败执行失败的结果
+                    reject(error)
+                }
+            }
+
+            //then方法  里面有两个函数  成功有成功的值  失败有失败的值
+
+            //解决链式调用 在then方法中创建一个promise2 
+
+            //resovePromise函数处理自己的return promise和默认的promise2的关系
+            then(onSuccess, onFail) {
+                //成功状态就执行成功状态的结果
+                let promise2 = new promise((resove, reject) => {
+                    if (this.padding == "success") {
+                        let x = onSuccess(this.success)
+                        resovePromise(promise2, x, resove, reject)
+                    }
+                    //失败状态就执行失败状态的结果
+                    if (this.padding == "fail") {
+                        let x = onFail(this.fail)
+                    }
+
+                    //如果状态为padding的话就将成功状态和失败状态的函数存入对应的数组中
+                    if (this.padding = "padding") {
+                        //将成功的函数传入成功的数组
+                        this.successArr.push(() => {
+                            let x = onSuccess(this.success)
+                        })
+                        //将失败的函数传入失败的数组
+                        this.failArr.push(() => {
+                            let x = onFail(this.fail)
+                        })
+                    }
+                })
+
+
+            }
+        }
+
+        //resovePromise 函数处理自己的return promise和默认的promise2的关系
+
+        function resovePromise(promise2, x, resove, reject) {
+
+            //循环引用报错
+            if (x == promise2) {
+                return reject("报错啦")
+            }
+
+            //阻止多次调用
+            let state;
+
+            //x不能是null  是普通值直接resove  如果是对象或者是函数
+            if (x != null && (typeof x == 'Object' || typeof x == 'function')) {
+                try {
+                    let then = x.then
+                    if (typeof then == "function") {
+                        this.call(x, y => {
+                            if (state) return;
+                            state = true
+                            //resove的结果还是promise就继续调用resovePromise函数
+                            resovePromise(promise2, y, resove, reject)
+                        }, err => {
+                            if (state) return;
+                            state = true
+                            //失败直接执行失败的结果
+                            reject(err)
+                        })
+                    } else {
+                        //返回的是值的话直接成功即可
+                        resove(x)
+                    }
+                } catch (error) {
+                    //也属于失败
+                    if (state) return;
+                    state = true
+                    //失败直接执行失败的结果
+                    reject(error)
+                }
+            } else {
+                //直接成功即可
+                resove(x)
+            }
+
+
+        }
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        html,
+        body {
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+
+        canvas {
+
+            display: block;
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"> </canvas>
+
+
+    <script>
+
+        let canvas = document.getElementById("canvas")
+        let ctx = canvas.getContext("2d")
+        canvas.style.backgroundColor = "black"
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+
+        let x = 0, y = 0;
+        let speeds;
+        let speed = 4
+        let ang = .1;
+        let times;
+        let rotateState = false;
+        let col2 = 255,col1 = 255
+
+
+        function awa() {
+            ctx.save()
+            ctx.beginPath();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'red';
+            ctx.arc(x, y, 10, 0, Math.PI * 2)
+            ctx.fill();
+            ctx.restore();
+
+        }
+
+        function move() {
+            ctx.beginPath();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'red';
+            ctx.arc(x, y, 10, 0, Math.PI * 2)
+            ctx.fill();
+            y -= 1
+            if (speeds - y >= 30) {
+                speed = 4
+                ang = .1;
+                rotateMove()
+                return
+            }
+            requestAnimationFrame(move)
+        }
+
+        function rotateMove() {
+            if (rotateState) return;
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = `rgb(${col1},${col2},255)`;
+            ctx.arc(x, y, 10, 0, Math.PI * 2)
+            ctx.fill();
+            x += Math.cos(ang) * speed
+            y += Math.sin(ang) * speed
+            ang += .1
+            col2 -= .5
+            if (col2 <= 0) {
+                col2 = 0
+                col1 -= .5
+            }
+            if (col1 <= 0) {
+                col1 = col2 = 255
+            }
+            requestAnimationFrame(rotateMove)
+        }
+
+
+        document.addEventListener("mousemove", (event) => {
+            x = event.clientX
+            y = event.clientY
+            speeds = y
+            rotateState = true
+            awa()
+
+            if (times !== null) clearTimeout(times);
+            times = setTimeout(() => {
+                rotateState = false
+                move()
+            }, 1000)
+
+        })
+
+
+
+
+
+    </script>
+</body>
+
+</html>

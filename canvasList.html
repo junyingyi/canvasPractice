@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <canvas id="vas"></canvas>
+
+    <script>
+
+        //创建canvs节点
+        const vas = document.createElement('canvas');
+        const ctx = vas.getContext('2d');
+        vas.width = document.documentElement.clientWidth
+        vas.height = document.documentElement.clientHeight
+        // vas.style.backgroundColor = "black"
+
+        const text = "hellow word"
+        ctx.font = "50px sans-serif";
+        const tsWidth = ctx.measureText(text)
+        const alignWidth = vas.width / 2 - tsWidth.width / 2
+        const alignHeight = vas.height / 2
+        const lineargradient = ctx.createLinearGradient(alignWidth, 0, vas.width, 0);
+        lineargradient.addColorStop(0, 'red');
+        lineargradient.addColorStop(0.2, 'skyblue');
+        lineargradient.addColorStop(0.5, 'yellow');
+        lineargradient.addColorStop(0.7, 'green');
+        lineargradient.addColorStop(1, 'black');
+        ctx.fillStyle = lineargradient
+        ctx.fillText(text, alignWidth, alignHeight);
+        ctx.save();
+        //获取像素数据
+        // const getImageData = ctx.getImageData(alignWidth,alignHeight,tsWidth.width,100)
+        let getImageData = ctx.getImageData(0, 0, vas.width, vas.height).data
+        console.log(getImageData)
+
+        class Particle {
+            constructor(options = {}) {
+                const { x = 0, y = 0, color = '#fff', radius = 5 } = options;
+                this.radius = radius;
+                this.x = x;
+                this.y = y;
+                this.color = color;
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+                // console.log(this.x, this.y)
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+
+        const vas1 = document.getElementById("vas");
+        vas1.width = vas.width;
+        vas1.height = vas.height;
+        vas1.style.backgroundColor = "black"
+        const ctx1 = vas1.getContext('2d');
+
+        function draw() {
+            ctx.beginPath();
+            //清空画布
+            ctx1.clearRect(0, 0, vas.width, vas.width);
+            const particles = [];
+
+            const skip = 4;
+            for (var y = 0; y < vas.width; y += skip) {
+                for (var x = 0; x < vas.height; x += skip) {
+                    var opacityIndex = (x + y * vas.width) * 4 + 3;
+                    // console.log(opacityIndex)
+                    if (getImageData[opacityIndex] > 0) {
+                        particles.push(new Particle({
+                            x: x + Math.random() * 6 - 3,
+                            y: y + Math.random() * 6 - 3,
+                            radius: 1,
+                            color: lineargradient
+                        }));
+                    }
+                }
+            }
+            //画粒子
+            for (const particle of particles) {
+                particle.draw(ctx1);
+            }
+
+            //执行动画
+            requestAnimationFrame(draw);
+        }
+
+        draw()
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        #bg {
+            width: 100%;
+            height: 100%;
+            background-color: skyblue;
+            position: relative;
+        }
+
+        #bg .gear {
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+        }
+
+        @keyframes gear1 {
+            0% {
+                transform: rotate(0deg)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        #bg .gear img {
+            animation: gear1 2s linear infinite;
+        }
+
+        #bg .gear div {
+            height: 9px;
+            border: 1px solid white;
+            width: 200px;
+            box-sizing: border-box;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+
+        #bg .gear div i {
+            display: block;
+            width: 0%;
+            height: 100%;
+            border-radius: 10px;
+            background-color: blue;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <div id="bg">
+
+
+        <div class="gear">
+            <img src="./img/gear1.png" alt="">
+            <img src="./img/gear2.png" alt="">
+
+            <div>
+                <i id="imgs"></i>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="bgs">
+        加载完成啦
+    </div>
+
+
+
+
+
+
+
+    <script>
+        let width = 0;
+        let pathArr = [
+            "68887a492ab7a89f04b069dc575c51f1.jpg",
+            "timg (1).jpeg",
+            "timg (2).jpeg",
+            "timg.jpeg",
+            "u=3459468688,2408609762&fm=26&gp=0.jpg"
+        ]
+
+        function loadImg(pathArr, callback) {
+            let imgs = []
+            let index = 0;
+            for (let i = 0; i < pathArr.length; i++) {
+                imgs[i] = new Image();
+                imgs[i].src = "img/" + pathArr[i];
+                imgs[i].onload = function () {
+                    index++
+                    if (callback) {
+                        callback(index, pathArr);
+                    }
+                }
+            }
+            return imgs
+        }
+
+        function imgLoader(n, imgSrc) {
+            //加载进度百分比 (加载数量 / 图片数量 * 100)
+            var loadImgNum = parseInt(parseFloat(n / imgSrc.length).toFixed(2) * 100);
+            //做加载动画处理
+            document.getElementById("imgs").style.width = loadImgNum + "%"
+            //如果加载完成执行
+            if (n == imgSrc.length) {
+                document.getElementById("bg").style.display = "none"
+            }
+        }
+
+
+        //开始加载图片
+        loadImg(pathArr, imgLoader)
+
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+
+
+
+
+    <script>
+
+        /**
+         * 创建一个promise类
+         * promise有两个方法revoce reject
+         * promise有三个状态  状态改变后不可更改
+         * promise有一个then方法
+         * promise解决多个then方法的调用
+         * promise解决链式调用   在then方法中返回一个promise2函数
+        */
+
+
+        class promise {
+            constructor(sums) {
+
+                this.state = "padding"
+                this.success = null
+                this.fail = null
+                //创建两个数组存储成功的方法和失败的方法
+                this.successArr = []
+                this.failArr = []
+
+                let resove = (success) => {
+                    if (this.state == "padding") {
+                        this.state = "success"
+                        this.success = success
+                        //一旦成功就执行成功的函数
+                        this.successArr.forEach(fn => fn())
+                    }
+
+                }
+                let reject = (fail) => {
+                    if (this.state == "padding") {
+                        this.fail = fail
+                        this.state = "fail"
+                        //一旦失败就执行失败的函数
+                        this.failArr.forEach(fn => fn())
+                    }
+
+                }
+
+                try {
+                    sums(resove.reject)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+
+            // then 有两个参数  成功有成功的值  失败有失败的状态
+            then(onSuccess, onFail) {
+                //解决then的链式调用   resolvePromise函数处理数据  
+                let promise2 = new promise((resove, reject) => {
+
+                    //成功有成功的值
+                    if (this.state == "success") {
+                        let x = onSuccess(this.success)
+                        resovePromise(promise2, x, resove, reject)
+                    }
+                    //失败有失败的结果
+                    if (this.state = "fail") {
+                        let x = onFail(this.fail)
+                        resovePromise(promise2, x, resove, reject)
+                    }
+                    //如果状态是padding就将对应的方法存入对应的数组
+                    if (this.state = "padding") {
+                        this.successArr.push(() => {
+                            let x = onSuccess(this.success)
+                            resovePromise(promise2, x, resove, reject)
+                        })
+                        this.failArr.push(() => {
+                            let x = onFail(this.fail)
+                            resovePromise(promise2, x, resove, reject)
+                        })
+                    }
+
+                })
+                return promise2
+            }
+        }
+
+
+        function resovePromise(promise2, x, resove, reject) {
+            //首先判断x是不是null  如果是null直接执行错误的结果
+            if (x == null) {
+                reject("出错啦")
+            }
+            //设置一个变量只执行一次
+            //  判断x是不是函数或者方法  如果是则在执行一次resovePromise函数 如果不是就直接执行结果
+            let state;
+
+            if (x != null && (typeof x == "function" || typeof x == "Object")) {
+                try {
+                    let then = x.then
+                    //是promise则在执行一次resovepromise
+                    if (then == "function") {
+                        //让then执行  x是this  y是返回的参数  成功就是成功的值失败就是失败的状态
+                        then.call(x, y => {
+                            if (state) return;
+                            state = true;
+                            //resove的结果依旧是promise 再次执行resovepromise
+                            resovePromise(promise2, y, resove, reject)
+
+                        })
+                    } else {
+                        resove(x)
+                    }
+                } catch (error) {
+                    //执行失败的结果
+                    if (state) return;
+                    state = true;
+                    reject(error)
+                }
+            } else {
+                resove(x)
+            }
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>

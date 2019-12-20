@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+        html,
+        body {
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+
+        canvas {
+
+            display: block;
+
+            width: 100%;
+
+            height: 100%;
+
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas"> </canvas>
+
+
+    <script>
+        //获取画板元素
+        let canvas = document.getElementById("canvas")
+        //创建一饿context对象
+        let ctx = canvas.getContext("2d")
+
+        //设置canvas和屏幕一样大小
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+
+
+        let x=450, y=450;
+
+        let speed = 10
+        let ang = .1;
+        var moon = new Image();
+        moon.src = 'https://mdn.mozillademos.org/files/1429/Canvas_earth.png';
+        //  使用动画在绘制路径开始之前通常需要加上beginPath()方法。否则使用路径的动画无法清空画布。 动画步骤  先清空 再绘制 再清空  在绘制
+        function draw() {
+
+            ctx.beginPath();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.drawImage(moon, 20, 20);
+            ctx.rotate(1 * Math.PI / 180);
+            ctx.translate(-x, -y);
+            // ctx.restore();
+
+
+            //执行动画
+            requestAnimationFrame(draw);
+            //
+        }
+
+        draw()
+
+
+
+    </script>
+
+</body>
+
+</html>
